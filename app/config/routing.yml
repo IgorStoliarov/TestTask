@@ -1,0 +1,11 @@
+oro_bar:
+    resource: "@OROBarBundle/Resources/config/routing.yml"
+    prefix:   /
+
+oro_foo:
+    resource: "@OROFooBundle/Resources/config/routing.yml"
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
