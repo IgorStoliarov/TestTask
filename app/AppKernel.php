@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new ORO\FooBundle\OROFooBundle(),
             new ORO\BarBundle\OROBarBundle(),
+            new ORO\ChainCommandBundle\OROChainCommandBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

@@ -1,3 +1,7 @@
+oro_chain_command:
+    resource: "@OROChainCommandBundle/Resources/config/routing.yml"
+    prefix:   /
+
 oro_bar:
     resource: "@OROBarBundle/Resources/config/routing.yml"
     prefix:   /
