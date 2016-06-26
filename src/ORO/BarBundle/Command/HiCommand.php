@@ -14,9 +14,11 @@ class HiCommand extends MemberCommand
         $this->setMaster('foo:hello');
     }
 
-    protected function memberExecute(InputInterface $input, OutputInterface $output)
+    public function memberExecute(InputInterface $input, OutputInterface $output)
     {
         $text = 'Hi from Bar!';
         $output->writeln($text);
+
+        return $text;
     }
 }

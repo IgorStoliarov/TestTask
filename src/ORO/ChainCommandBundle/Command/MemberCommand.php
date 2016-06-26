@@ -34,7 +34,7 @@ abstract class MemberCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->member == true && $this->masterAccess == false) {
+        if ($this->member && !$this->masterAccess) {
 
             $name = $this->getName();
             throw new LogicException("$name command is a member of $this->master command chain and cannot be executed on its own");
@@ -43,5 +43,5 @@ abstract class MemberCommand extends ContainerAwareCommand
         $this->memberExecute($input, $output);
     }
 
-    abstract protected function memberExecute(InputInterface $input, OutputInterface $output);
+    abstract public function memberExecute(InputInterface $input, OutputInterface $output);
 }

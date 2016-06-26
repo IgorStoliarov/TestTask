@@ -17,5 +17,7 @@ class HelloCommand extends MasterCommand
     {
         $text = 'Hello from Foo!';
         $output->writeln($text);
+
+        return $text;
     }
 }

@@ -8,33 +8,60 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class MasterCommand extends ContainerAwareCommand
 {
-    protected function executeMembers(InputInterface $input, OutputInterface $output)
+    private $members = [];
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->findMembers();
+
+        if ($this->members) {
+            $logger = $this->getContainer()->get('logger');
+
+            $name = $this->getName();
+
+            $logger->info("$name is a master command of a command chain that has registered member commands");
+
+            foreach ($this->members as $member) {
+                $memberName = $member->getName();
+                $logger->info("$memberName registered as a member of $name command chain");
+            }
+
+            $logger->info("Executing $name command itself first:");
+        }
+
+        $result = $this->masterExecute($input, $output);
+
+        if ($this->members) {
+
+            $logger->info($result);
+            $logger->info("Executing $name chain members:");
+
+            $this->executeMembers($input, $output, $logger);
+
+            $logger->info("Execution of $name chain completed.");
+        }
+    }
+
+    protected function findMembers()
     {
         foreach($this->getApplication()->all() as $command) {
 
             if ($command instanceof MemberCommand) {
                 if ($command->getMaster() == $this->getName()) {
                     $command->setMasterAccess();
-                    $command->run($input, $output);
+                    $this->members[] = $command;
                 }
             }
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $logger = $this->getContainer()->get('logger');
-
-        $name = $this->getName();
-
-        $logger->info("$name is a master command of a command chain that has registered member commands");
-
-        $this->masterExecute($input, $output);
-
-        $this->executeMembers($input, $output);
-
-        $logger->info("Execution of $name chain completed.");
-    }
-
     abstract protected function masterExecute(InputInterface $input, OutputInterface $output);
+
+    protected function executeMembers(InputInterface $input, OutputInterface $output, $logger)
+    {
+        foreach($this->members as $member) {
+            $result = $member->memberExecute($input, $output);
+            $logger->info($result);
+        }
+    }
 }
