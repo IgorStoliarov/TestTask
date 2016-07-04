@@ -6,10 +6,29 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class MasterCommand
+ * Have to be extended for creation of master command
+ */
 abstract class MasterCommand extends ContainerAwareCommand
 {
+    /**
+     * Array of member commands
+     *
+     * @var array
+     */
     private $members = [];
 
+    /**
+     * First try to find members of chain
+     * If there are no members function runs standard command execution
+     * Otherwise it runs all chain members as well and provide logging
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * 
+     * @return mixed
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->findMembers();
@@ -42,6 +61,9 @@ abstract class MasterCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Try to find registered member commands of this master through all application commands
+     */
     protected function findMembers()
     {
         foreach($this->getApplication()->all() as $command) {
@@ -55,8 +77,23 @@ abstract class MasterCommand extends ContainerAwareCommand
         }
     }
 
+    /**
+     * Abstract function that provides main logic of command itself
+     * Must be realized in every created master command
+     * 
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return mixed
+     */
     abstract protected function masterExecute(InputInterface $input, OutputInterface $output);
 
+    /**
+     * Execute members registered in this chain
+     * 
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param $logger
+     */
     protected function executeMembers(InputInterface $input, OutputInterface $output, $logger)
     {
         foreach($this->members as $member) {
